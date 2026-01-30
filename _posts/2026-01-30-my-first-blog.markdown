@@ -1,5 +1,6 @@
 ---
 layout: post
+# remote_theme: mmistakes/minimal-mistakes
 title:  "你好"
 date:   2026-01-30 14:00:00 +0800
 categories: memo
