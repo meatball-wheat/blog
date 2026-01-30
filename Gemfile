@@ -34,4 +34,5 @@ gem "http_parser.rb", "~> 0.6.0", :platforms => [:jruby]
 
 gem "github-pages", "~> 232", group: :jekyll_plugins
 
-#Gemfile.lock
+# install theme
+gem "minimal-mistakes-jekyll"
