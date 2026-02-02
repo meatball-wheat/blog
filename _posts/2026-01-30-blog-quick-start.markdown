@@ -4,6 +4,7 @@ layout: post
 title:  "用github pages和jekyll搭建一个简易博客"
 date:   2026-01-30 17:00:00 +0800
 categories: memo
+tags: 实践记录 memo
 ---
 
 ## 目的

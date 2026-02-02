@@ -35,4 +35,4 @@ gem "http_parser.rb", "~> 0.6.0", :platforms => [:jruby]
 gem "github-pages", "~> 232", group: :jekyll_plugins
 
 # install theme
-gem "minimal-mistakes-jekyll"
+# gem "minimal-mistakes-jekyll"

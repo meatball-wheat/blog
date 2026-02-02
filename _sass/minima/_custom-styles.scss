@@ -1,0 +1,24 @@
+// _sass/minima/custom-styles.scss
+
+// 这块东西一直没有生效，先不处理了
+/* DEBUG: custom-styles.scss IS LOADED! */
+html {
+    background-color: lime !important;
+    border: 10px solid red !important;
+  }
+// 强制覆盖 body 字体（使用 !important 确保生效）
+html body {
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", Helvetica, Arial, sans-serif !important;
+    font-size: 16px !important;
+    line-height: 1.7 !important;
+  }
+  
+  // 标题行高优化
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.3 !important;
+  }
+  
+  // 代码字体（可选）
+  code, pre, kbd {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace !important;
+  }
