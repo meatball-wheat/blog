@@ -1,16 +1,16 @@
 ---
 layout: post
 # remote_theme: mistakes/minimal-mistakes
-title:  "用github pages和jekyll搭建一个建议博客"
+title:  "用github pages和jekyll搭建一个简易博客"
 date:   2026-01-30 17:00:00 +0800
 categories: memo
 ---
 
 ## 目的
-快速搭建一个建议的blog系统，没有太多美化的诉求，仅为记录各种随笔
+快速搭建一个简易的blog系统，没有太多美化的诉求，仅为记录各种随笔
 
 ## 系统
-macOs，本机已有git环境，而且安装了homebrew
+macOS，本机已有git环境，而且安装了homebrew
 
 ## 步骤和踩坑
 - step1 创建git仓库，
