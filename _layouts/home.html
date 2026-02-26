@@ -3,10 +3,29 @@ layout: default
 ---
 <style>
   /* 仅作用于当前页面的标题，避免影响其他页面 */
-  .home > .post-list-heading {
+  .home>.post-list-heading {
     font-family: 'Comic Sans MS', 'Comic Sans', cursive !important;
     /* 可选：微调字号/粗细更醒目 */
     /* font-size: 1.8rem; */
+    /* font-weight: bold; */
+  }
+
+  .home .post-list {
+    font-family: 'Comic Sans MS', 'Comic Sans', 'PingFang SC' cursive !important;
+    /* 可选：微调字号/粗细更醒目 */
+    font-size: 1.2rem !important;
+    /* font-weight: bold; */
+  }
+
+  /* 💡 额外建议：同时优化包裹它的 h3（避免 margin 冲突） */
+  .home h3 {
+    margin-top: 0.8rem !important;
+    margin-bottom: 0.4rem !important;
+  }
+  .home .post-list .post-tag{
+    font-family: 'Comic Sans MS', 'Comic Sans', 'PingFang SC' cursive !important;
+    /* 可选：微调字号/粗细更醒目 */
+    font-size: 1.0rem !important;
     /* font-weight: bold; */
   }
 </style>
