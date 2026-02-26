@@ -3,14 +3,14 @@ layout: post
 # remote_theme: mistakes/minimal-mistakes
 title:  "用github pages和jekyll搭建一个简易博客"
 date:   2026-01-30 17:00:00 +0800
-categories: memo
-tags: 实践记录 memo
+# categories: memo
+tags: 实践记录 
 ---
 
 ## 目的
 快速搭建一个简易的blog系统，没有太多美化的诉求，仅为记录各种随笔
 
-## 系统
+## 环境
 macOS，本机已有git环境，而且安装了homebrew
 
 ## 步骤和踩坑

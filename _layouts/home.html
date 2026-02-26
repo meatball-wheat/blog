@@ -1,7 +1,15 @@
 ---
 layout: default
 ---
-
+<style>
+  /* 仅作用于当前页面的标题，避免影响其他页面 */
+  .home > .post-list-heading {
+    font-family: 'Comic Sans MS', 'Comic Sans', cursive !important;
+    /* 可选：微调字号/粗细更醒目 */
+    /* font-size: 1.8rem; */
+    /* font-weight: bold; */
+  }
+</style>
 <div class="home">
   {%- if page.title -%}
   <h1 class="page-heading">{{ page.title }}</h1>
