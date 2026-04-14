@@ -2,31 +2,156 @@
 layout: default
 ---
 <style>
-  /* 仅作用于当前页面的标题，避免影响其他页面 */
-  .home>.post-list-heading {
+  /* 页面整体背景 - 奶油白 */
+  body {
+    background-color: #FFF8EC !important;
+  }
+
+  /* 首页内容区 */
+  .home {
+    padding: 10px 0;
+    font-family: 'Comic Sans MS', 'Comic Sans', 'PingFang SC', cursive !important;
+  }
+
+  /* 首页介绍文字 */
+  .home p {
+    font-family: 'Comic Sans MS', 'Comic Sans', 'PingFang SC', cursive !important;
+    color: #546B41;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* 标题栏容器 */
+  .post-list-header {
+    display: flex;
+    align-items: flex-end;
+    gap: 15px;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid #99AD7A;
+  }
+
+  /* Welcome 标题 - 深橄榄绿 */
+  .home>.post-list-heading,
+  .post-list-header .post-list-heading {
     font-family: 'Comic Sans MS', 'Comic Sans', cursive !important;
-    /* 可选：微调字号/粗细更醒目 */
-    /* font-size: 1.8rem; */
-    /* font-weight: bold; */
+    color: #546B41;
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin: 0;
+    border: none;
+    padding: 0;
   }
 
+  /* 介绍文字 */
+  .post-list-intro {
+    font-family: 'Comic Sans MS', 'Comic Sans', 'PingFang SC', cursive !important;
+    color: #546B41;
+    font-size: 1.1rem;
+  }
+
+  /* 文章列表字体 */
   .home .post-list {
-    font-family: 'Comic Sans MS', 'Comic Sans', 'PingFang SC' cursive !important;
-    /* 可选：微调字号/粗细更醒目 */
-    font-size: 1.2rem !important;
-    /* font-weight: bold; */
+    font-family: 'Comic Sans MS', 'Comic Sans', 'PingFang SC', cursive !important;
   }
 
-  /* 💡 额外建议：同时优化包裹它的 h3（避免 margin 冲突） */
+  /* 文章标题 - 深橄榄绿 */
   .home h3 {
-    margin-top: 0.8rem !important;
-    margin-bottom: 0.4rem !important;
+    margin-top: 0.3rem !important;
+    margin-bottom: 0.2rem !important;
+    font-size: 1.2rem !important;
   }
-  .home .post-list .post-tag{
-    font-family: 'Comic Sans MS', 'Comic Sans', 'PingFang SC' cursive !important;
-    /* 可选：微调字号/粗细更醒目 */
-    font-size: 1.0rem !important;
-    /* font-weight: bold; */
+
+  .home h3 .post-link {
+    font-size: inherit !important;
+    color: #546B41;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .home h3 .post-link:hover {
+    color: #99AD7A;
+    text-decoration: underline;
+  }
+
+  /* Tag 样式 - 浅橄榄绿背景 */
+  .home .post-list .post-tag {
+    font-family: 'Comic Sans MS', 'Comic Sans', 'PingFang SC', cursive !important;
+    font-size: 0.85rem !important;
+    background-color: #99AD7A;
+    color: #FFF8EC;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin-right: 6px;
+    display: inline-block;
+    transition: background-color 0.2s ease;
+  }
+
+  .home .post-list .post-tag:hover {
+    background-color: #546B41;
+  }
+
+  .home .post-list .post-tag a {
+    text-decoration: none;
+    color: #FFF8EC;
+  }
+
+  .home .post-list .post-tag a:hover {
+    color: #FFF8EC;
+  }
+
+  /* 元信息行 - 日期和分隔符 */
+  .home .post-meta-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 0.2rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .home .post-meta {
+    color: #546B41;
+    font-size: 0.9rem;
+  }
+
+  .home .post-meta-separator {
+    color: #99AD7A;
+  }
+
+  /* 文章列表项 - 米色底边效果 */
+  .home .post-list li {
+    margin-bottom: 1.2rem;
+    padding: 12px 0;
+    border-bottom: 2px solid #DCCCAC;
+    transition: border-color 0.2s ease;
+  }
+
+  .home .post-list li:hover {
+    border-bottom-color: #99AD7A;
+  }
+
+  .home .post-list li:last-child {
+    border-bottom: none;
+  }
+
+  /* RSS 订阅链接 */
+  .home .rss-subscribe {
+    margin-top: 2rem;
+    text-align: center;
+  }
+
+  .home .rss-subscribe a {
+    color: #546B41;
+    text-decoration: none;
+    padding: 8px 16px;
+    background-color: #DCCCAC;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+  }
+
+  .home .rss-subscribe a:hover {
+    background-color: #99AD7A;
+    color: #FFF8EC;
   }
 </style>
 <div class="home">
@@ -34,30 +159,31 @@ layout: default
   <h1 class="page-heading">{{ page.title }}</h1>
   {%- endif -%}
 
-  {{ content }}
-
   {%- if site.posts.size > 0 -%}
-  <h2 class="post-list-heading">{{ page.list_title | default: "Posts" }}</h2>
+  <div class="post-list-header">
+    <h2 class="post-list-heading">{{ page.list_title | default: "Posts" }}</h2>
+    <span class="post-list-intro">{{ content | strip_html | strip_newlines }}</span>
+  </div>
   <ul class="post-list">
     {%- for post in site.posts -%}
     <li>
-      {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
-      <span class="post-meta">{{ post.date | date: date_format }}</span>
       <h3>
         <a class="post-link" href="{{ post.url | relative_url }}">
           {{ post.title | escape }}
         </a>
       </h3>
-      <!-- 新增：显示 tags -->
-      {%- if post.tags.size > 0 -%}
-      <div class="post-tags">
+      <div class="post-meta-line">
+        {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
+        <span class="post-meta">{{ post.date | date: date_format }}</span>
+        {%- if post.tags.size > 0 -%}
+        <span class="post-meta-separator">|</span>
         {%- for tag in post.tags -%}
         <span class="post-tag">
-          <a href="{{ site.baseurl }}/tags/#{{ tag | slugify }}">#{{ tag }}</a>
+          <a href="{{ site.baseurl }}/tags/#{{ tag | slugify }}">{{ tag }}</a>
         </span>
         {%- endfor -%}
+        {%- endif -%}
       </div>
-      {%- endif -%}
       {%- if site.show_excerpts -%}
       {{ post.excerpt }}
       {%- endif -%}
@@ -65,7 +191,8 @@ layout: default
     {%- endfor -%}
   </ul>
 
-  <p class="rss-subscribe">subscribe <a href="{{ " /feed.xml" | relative_url }}">via RSS</a></p>
+  <!-- RSS订阅已隐藏 -->
+  <!-- <p class="rss-subscribe">subscribe <a href="{{ " /feed.xml" | relative_url }}">via RSS</a></p> -->
   {%- endif -%}
 
 </div>
