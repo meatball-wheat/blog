@@ -287,8 +287,8 @@ layout: default
             {%- if post.tags.size > 0 -%}
             <span class="post-meta-separator">|</span>
             {%- for tag in post.tags -%}
-            <span class="post-tag">
-              <a href="{{ site.baseurl }}/tags/#{{ tag | slugify }}">{{ tag }}</a>
+            <span class="post-tag" onclick="filterByTag('{{ tag }}')" style="cursor: pointer;">
+              {{ tag }}
             </span>
             {%- endfor -%}
             {%- endif -%}
