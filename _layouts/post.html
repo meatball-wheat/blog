@@ -195,6 +195,102 @@ layout: default
     .post-content tr:nth-child(even) {
         background-color: rgba(220, 204, 172, 0.3);
     }
+
+    /* ===== TOC Sidebar ===== */
+    .post-body-wrapper {
+        display: block;
+    }
+
+    .post-body-wrapper .post-content {
+        max-width: 100%;
+    }
+
+    .toc-sidebar {
+        position: fixed;
+        top: 2rem;
+        width: 240px;
+        max-height: calc(100vh - 4rem);
+        overflow-y: auto;
+        padding: 1rem 0;
+        font-family: 'Comic Sans MS', 'Comic Sans', 'PingFang SC', 'Microsoft YaHei', cursive, sans-serif;
+    }
+
+    .toc-sidebar-title {
+        font-size: 0.95rem;
+        font-weight: bold;
+        color: #546B41;
+        margin-bottom: 0.8rem;
+        padding-left: 12px;
+        border-left: 3px solid #99AD7A;
+    }
+
+    .toc-sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .toc-sidebar li {
+        margin: 0;
+    }
+
+    .toc-sidebar li a {
+        display: block;
+        padding: 5px 12px;
+        font-size: 0.85rem;
+        color: #546B41;
+        text-decoration: none;
+        line-height: 1.5;
+        border-radius: 6px;
+        margin: 1px 8px;
+        transition: all 0.2s ease;
+        word-break: break-word;
+    }
+
+    .toc-sidebar li a:hover {
+        color: #99AD7A;
+    }
+
+    .toc-sidebar li.toc-h1 a {
+        padding-left: 12px;
+        font-size: 0.9rem;
+        font-weight: bold;
+    }
+
+    .toc-sidebar li.toc-h2 a {
+        padding-left: 24px;
+        font-size: 0.85rem;
+    }
+
+    .toc-sidebar li.toc-h3 a {
+        padding-left: 36px;
+        font-size: 0.82rem;
+    }
+
+    .toc-sidebar li a.active {
+        background-color: #99AD7A;
+        color: #FFF8EC;
+        font-weight: bold;
+    }
+
+    /* 响应式：小屏隐藏TOC */
+    @media (max-width: 1024px) {
+        .toc-sidebar {
+            display: none;
+        }
+    }
+
+    /* TOC scrollbar */
+    .toc-sidebar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .toc-sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .toc-sidebar::-webkit-scrollbar-thumb {
+        background-color: #DCCCAC;
+        border-radius: 4px;
+    }
 </style>
 
 <article class="post-page h-entry" itemscope itemtype="http://schema.org/BlogPosting">
@@ -215,9 +311,111 @@ layout: default
         </p>
     </header>
 
-    <div class="post-content e-content" itemprop="articleBody">
-        {{ content }}
+    <div class="post-body-wrapper">
+        <div class="post-content e-content" itemprop="articleBody">
+            {{ content }}
+        </div>
+        <nav class="toc-sidebar" id="toc-sidebar"></nav>
     </div>
 
     <a class="u-url" href="{{ page.url | relative_url }}" hidden></a>
 </article>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var content = document.querySelector('.post-content');
+    var sidebar = document.getElementById('toc-sidebar');
+    if (!content || !sidebar) return;
+
+    var headings = content.querySelectorAll('h1, h2, h3');
+    if (headings.length === 0) {
+        sidebar.style.display = 'none';
+        return;
+    }
+
+    // Build TOC
+    var title = document.createElement('div');
+    title.className = 'toc-sidebar-title';
+    title.textContent = '目录';
+    sidebar.appendChild(title);
+
+    var ul = document.createElement('ul');
+    sidebar.appendChild(ul);
+
+    var idCounters = {};
+    headings.forEach(function(heading) {
+        // Ensure unique id
+        if (!heading.id) {
+            heading.id = heading.textContent.trim().toLowerCase().replace(/[^\w\u4e00-\u9fff]+/g, '-').replace(/^-|-$/g, '');
+        }
+        var baseId = heading.id;
+        if (idCounters[baseId] !== undefined) {
+            idCounters[baseId]++;
+            heading.id = baseId + '-' + idCounters[baseId];
+        } else {
+            idCounters[baseId] = 0;
+        }
+
+        var li = document.createElement('li');
+        var tag = heading.tagName.toLowerCase();
+        li.className = tag === 'h3' ? 'toc-h3' : tag === 'h2' ? 'toc-h2' : 'toc-h1';
+        var a = document.createElement('a');
+        a.href = '#' + heading.id;
+        a.textContent = heading.textContent;
+        a.setAttribute('data-target', heading.id);
+        li.appendChild(a);
+        ul.appendChild(li);
+    });
+
+    // Smooth scroll on click
+    sidebar.addEventListener('click', function(e) {
+        var a = e.target.closest('a');
+        if (!a) return;
+        e.preventDefault();
+        var target = document.getElementById(a.getAttribute('data-target'));
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+
+    // IntersectionObserver for scroll highlighting
+    var tocLinks = sidebar.querySelectorAll('a');
+    var observerOptions = {
+        rootMargin: '-20px 0px -70% 0px',
+        threshold: 0
+    };
+
+    var currentActive = null;
+
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                var id = entry.target.id;
+                tocLinks.forEach(function(link) {
+                    if (link.getAttribute('data-target') === id) {
+                        link.classList.add('active');
+                        currentActive = link;
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+            }
+        });
+    }, observerOptions);
+
+    // Calculate TOC position based on wrapper right edge
+    function positionToc() {
+        var wrapper = document.querySelector('.page-content .wrapper') || document.querySelector('.page-content');
+        if (!wrapper) return;
+        var rect = wrapper.getBoundingClientRect();
+        var rightOffset = window.innerWidth - rect.right - 240 - 32;
+        sidebar.style.right = Math.max(16, rightOffset) + 'px';
+    }
+    positionToc();
+    window.addEventListener('resize', positionToc);
+
+    headings.forEach(function(heading) {
+        observer.observe(heading);
+    });
+});
+</script>
