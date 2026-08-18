@@ -97,3 +97,65 @@ j = 4：装得下！dp[4] = max(dp[4], 10 + dp[2])。
 所以 dp[4] = 10 + 10 = 20。
 这说明什么？ 说明在容量为4的背包里，装了 2个A！
 结论：正序遍历会导致同一个物品被反复装入，这就变成了完全背包问题，违背了0-1背包“每个物品只能选一次”的规则。
+
+### 更多背包
+
+#### 完全背包
+**定义**：每个物品可以无限次的加入到背包中
+**解题思路**：将压缩后的0-1背包中的逆序调整为正序即可，每轮遍历时可以使用当前轮次的结果，从而实现单个物品的重复放入。
+
+#### 多重背包
+**定义**：在0-1背包的基础上，增加一层限制`count[i]`，表示每个物品至多放入`count[i]`次
+
+**解题思路1**：暴力拆解，将count[i]个物品展开，退化成0-1背包
+```java
+    public int boundedKnapsack(int capacity, int[] weight, int[] value, int[] count) {
+        int n = weight.length;
+        int[] dp = new int[capacity + 1];
+        
+        for (int i = 0; i < n; i++) {
+            // 把当前物品拆分成 count[i] 个独立的 0-1 物品
+            for (int c = 0; c < count[i]; c++) {
+                // 0-1 背包的逆序遍历
+                for (int j = capacity; j >= weight[i]; j--) {
+                    dp[j] = Math.max(dp[j], dp[j - weight[i]] + value[i]);
+                }
+            }
+        }
+        return dp[capacity];
+    }
+```
+
+**解题思路2**：二进制拆分，思路还是退化成0-1背包，不过与上面的区别在于将`count[i]`拆分为1、2、4、8...+rest的组合，从而压缩遍历次数。1、2、4...+rest可以组合成`count[i]`中的任意数是可以通过数学证明的，此处先忽略证明过程。
+```java
+    public int boundedKnapsack(int capacity, int[] weight, int[] value, int[] count) {
+        int n = weight.length;
+        // 一维 DP 数组，0-1 背包标准配置
+        int[] dp = new int[capacity + 1];
+        
+        for (int i = 0; i < n; i++) {
+            // 1. 二进制拆分：将 count[i] 拆分成 1, 2, 4, 8... 的组合包
+            int k = 1;
+            while (k <= count[i]) {
+                // 2. 将当前的“组合包”当作一个 0-1 物品，进行逆序遍历
+                // 组合包的重量 = k * weight[i]
+                // 组合包的价值 = k * value[i]
+                for (int j = capacity; j >= k * weight[i]; j--) {
+                    dp[j] = Math.max(dp[j], dp[j - k * weight[i]] + k * value[i]);
+                }
+                count[i] -= k;
+                k *= 2;
+            }
+            
+            // 3. 处理最后剩下的“余数包”
+            if (count[i] > 0) {
+                for (int j = capacity; j >= count[i] * weight[i]; j--) {
+                    dp[j] = Math.max(dp[j], dp[j - count[i] * weight[i]] + count[i] * value[i]);
+                }
+            }
+        }
+        
+        return dp[capacity];
+    }
+
+```
