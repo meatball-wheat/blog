@@ -2,7 +2,7 @@
 layout: post
 title:  "贝叶斯定理「Bayes Theorem」"
 date:   2026-09-01 17:00:00 +0800
-tags: 读书笔记
+tags: 学习笔记
 ---
 
 # 从关键概念入手
