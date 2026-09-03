@@ -3,7 +3,7 @@ layout: post
 title:  "写作练习的反思"
 date:   2026-04-14 17:00:00 +0800
 # categories: memo
-tags: 思考
+tags: 个人思考
 ---
 
 ## AI给出的评价（主要集中在指出问题）

@@ -4,7 +4,7 @@ layout: post
 title:  "快速在本地部署一个生成图片的模型"
 date:   2026-02-26 17:00:00 +0800
 # categories: memo
-tags: 实践记录
+tags: 技术实践
 ---
 
 #### 目的

@@ -3,7 +3,7 @@ layout: post
 title:  "梦境大乱斗为何如此吸引我"
 date:   2030-04-22 12:00:00 +0800
 # categories: memo
-tags: 思考
+tags: 生活随笔 个人思考
 ---
 
 为什么写这篇博客呢？

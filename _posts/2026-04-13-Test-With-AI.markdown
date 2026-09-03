@@ -3,7 +3,7 @@ layout: post
 title:  "AI是否提升了我的测试效率"
 date:   2026-04-13 17:00:00 +0800
 # categories: memo
-tags: 思考
+tags: 个人思考
 ---
 
 ### 讨论的背景
