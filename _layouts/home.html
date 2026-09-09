@@ -233,6 +233,39 @@ layout: default
     border-bottom: none;
   }
 
+  /* 搜索框容器 - 侧边栏适配 */
+  .search-box {
+    margin-bottom: 0.8rem;
+    margin-top: 0.8rem;
+  }
+
+  .search-box input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px 8px 32px;
+    font-family: 'Comic Sans MS', 'Comic Sans', 'PingFang SC', 'Microsoft YaHei', cursive, sans-serif;
+    font-size: 0.82rem;
+    color: #546B41;
+    background-color: #FFF8EC;
+    border: 2px solid #DCCCAC;
+    border-radius: 16px;
+    outline: none;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2399AD7A' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 10px center;
+  }
+
+  .search-box input::placeholder {
+    color: #99AD7A;
+    opacity: 0.7;
+  }
+
+  .search-box input:focus {
+    border-color: #99AD7A;
+    box-shadow: 0 0 0 3px rgba(153, 173, 122, 0.2);
+  }
+
   /* RSS 订阅链接 */
   .home .rss-subscribe {
     margin-top: 2rem;
@@ -304,6 +337,10 @@ layout: default
     <!-- 侧边栏标签云 -->
     <aside class="home-sidebar">
       <img src="{{ site.baseurl }}/assets/images/link.png" alt="Tags" class="tag-cloud-image">
+      <!-- 搜索框 -->
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="搜索文章..." oninput="applyFilters()">
+      </div>
       <div class="tag-cloud-title">Tags</div>
       <div class="tag-cloud" id="tagCloud">
         {%- assign all_tags = "" | split: "" -%}
@@ -335,12 +372,41 @@ layout: default
 </div>
 
 <script>
+  // 当前激活的标签（null 表示无标签筛选）
+  let activeTag = null;
+
+  /**
+   * 统一过滤：同时考虑标签筛选 + 搜索关键词
+   */
+  function applyFilters() {
+    const posts = document.getElementById('postList').getElementsByTagName('li');
+    const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+
+    for (let post of posts) {
+      // 标签条件
+      let tagMatch = true;
+      if (activeTag) {
+        const postTags = post.dataset.tags.split(',');
+        tagMatch = postTags.includes(activeTag);
+      }
+
+      // 搜索条件
+      let searchMatch = true;
+      if (keyword) {
+        const title = post.querySelector('h3').textContent.trim().toLowerCase();
+        searchMatch = title.includes(keyword);
+      }
+
+      post.style.display = (tagMatch && searchMatch) ? '' : 'none';
+    }
+  }
+
   function filterByTag(tag) {
-    const postList = document.getElementById('postList');
-    const posts = postList.getElementsByTagName('li');
     const filterNotice = document.getElementById('filterNotice');
     const filterTag = document.getElementById('filterTag');
     const tagButtons = document.querySelectorAll('.tag-cloud-item');
+
+    activeTag = tag;
 
     // 更新按钮状态
     tagButtons.forEach(btn => {
@@ -355,22 +421,14 @@ layout: default
     filterTag.textContent = tag;
     filterNotice.classList.add('show');
 
-    // 筛选文章
-    for (let post of posts) {
-      const postTags = post.dataset.tags.split(',');
-      if (postTags.includes(tag)) {
-        post.style.display = '';
-      } else {
-        post.style.display = 'none';
-      }
-    }
+    applyFilters();
   }
 
   function clearFilter() {
-    const postList = document.getElementById('postList');
-    const posts = postList.getElementsByTagName('li');
     const filterNotice = document.getElementById('filterNotice');
     const tagButtons = document.querySelectorAll('.tag-cloud-item');
+
+    activeTag = null;
 
     // 清除按钮状态
     tagButtons.forEach(btn => {
@@ -380,9 +438,6 @@ layout: default
     // 隐藏筛选提示
     filterNotice.classList.remove('show');
 
-    // 显示所有文章
-    for (let post of posts) {
-      post.style.display = '';
-    }
+    applyFilters();
   }
 </script>
