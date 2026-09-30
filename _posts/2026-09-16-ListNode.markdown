@@ -1,0 +1,264 @@
+---
+layout: post
+title:  "链表系列题解"
+date:   2026-09-16 17:00:00 +0800
+tags: 学习笔记
+---
+
+## 单向链表的定义
+一条由ListNode组成的单向链
+
+```java
+    // Definition for singly-linked list.
+    public class ListNode {
+        int val;
+        ListNode next;
+
+        ListNode(int x) {
+            val = x;
+            next = null;
+        }
+    }
+```
+
+## 常见题型
+1. 翻转链表：全部翻转，指定位置翻转，k个一组翻转
+2. 环形链表：判断是否环形链表，找到两个链表的交点，环形链表的起点
+3. 链表排序：排序链表，合并k个升序链表
+
+## 思路框架
+### 框架一：聚焦操作的节点及其前后节点，按序处理
+
+题目：给一个head节点，将翻转整个链表
+
+```
+head = 1->2->3->4->5
+
+result = 5->4->3->2->1
+```
+
+简化问题，现在想把1和2调换，具体需要什么信息？首先肯定是要处理的节点2，记为`cur`，2要从指向3改为指向1，所以必须还得有一个要指向的节点，记为`pre`(即cur的前一个节点)。由于最终目标是 `1<-2->3->4->5`，此时节点2有两个next，显然不符合节点规则，所以`2->3`需要断开，为了不丢失信息，必须要存储节点3，便于后续处理，记为`nextCur`（即下一个要处理的节点）。
+
+在有了以上信息后，具体的操作顺序就很清晰了
+
+``` 
+伪代码
+nextCur = cur.next // 找到下一个要处理的节点(3)
+cur.next = pre // 断开（2->3）,连接（2->1）
+pre = cur // 将pre挪到2
+cur = nextCur // 将cur置为下一个要处理的节点(3)
+```
+
+注意，这里隐含了一个信息，**pre和cur之间的链已经断开**，这个信息成立的原因在于在上一轮修改过cur.next，所以本轮不需要做额外的处理。
+
+完整代码如下（还有递归版，此处忽略）：
+```java
+    /**
+     * 翻转链表迭代版
+     */
+    public ListNode reverseListIter(ListNode head) {
+        ListNode pre = null;
+        ListNode cur = head;
+        while (cur != null) {
+            ListNode nextCur = cur.next;
+            cur.next = pre;
+            pre = cur;
+            cur = nextCur;
+        }
+        return pre;
+    }
+```
+
+**思路扩展**
+
+基于上面全部翻转的逻辑，「指定位置翻转」和「k个一组翻转」可以迎刃而解。
+
+「指定位置翻转」的要点先找到left和right区间，然后将其作为全部翻转的入参即可，left左边和right右边直接保留原状。
+
+「k个一组翻转」是指定位置的进阶版，将其看做以k个一组确定指定位置即可。实现的要点是增加一个“探路者”，从当前位置出发，用于检查后面到底还够不够k个。一旦满足条件，当前位置就是left，“探路者”的位置就是right，后续反转操作完全一致。
+
+
+### 框架二：快慢指针
+
+题目：给一个head节点，判断链表是否有环
+
+「Floyd判圈算法」：Floyd Cycle Detection Algorithm，又称龟兔赛跑算法（Tortoise and Hare Algorithm），是一种用于检测有限状态机、迭代函数或链表结构中是否存在环路的算法。该算法不仅能判断环的存在性，还可确定环的起点位置及其长度。
+
+判断是否有环：
+```
+伪代码
+fast, slow = head// 定义快慢指针
+fast = fast.next.next // 快指针每次前进两步
+slow = slow.next // 慢指针每次前进一步
+if(fast == null || fast.next == null) return false // 一直前进，如果fast或者fast.next 先到null，则说明链表有终点，无环
+if(fast == slow) return true // 一直前进，如果快慢指针相遇，这说明有环
+```
+
+完整代码如下：
+```java
+    public boolean hasCycle(ListNode head) {
+        ListNode fast = head;
+        ListNode slow = head;
+        while (fast != null && fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+            if (fast == slow) {
+                return true;
+            }
+        }
+        return false;
+    }
+```
+
+**思路扩展**
+
+「求环的长度」：fast和slow相遇一定在环上，让 slow 单独绕环走一圈并计数，走回相遇点时的步数就是环长，不用两个指针都参与。
+
+「求环的起点」：将任一节点（比如slow）重置回起点，然后两个节点同时前进，本次都是一步一步前进，当二者再次相遇时，即是环的起点。证明见下图
+
+<img src="{{ '/assets/images/floyd-algorithm.png' | relative_url }}" 
+     alt="Tortoise and Hare Algorithm" 
+     style="max-width: 50%; height: auto; display: block; margin: 0 auto;" />
+
+简单写下证明过程：
+
+假设环的长度为 \(r\)，链表起点为 `head`，环的入口为 \(A\)，快慢指针相遇于 \(B\)。设从 \(A\) 到 \(B\) 的距离为 \(x\)。
+
+1. 慢指针走过的路程为：
+
+   $$
+   k + x + ar
+   $$
+
+2. 快指针走过的路程为：
+
+   $$
+   k + x + br
+   $$
+
+3. 快指针的速度是慢指针的两倍，因此：
+
+   $$
+   2(k+x+ar)=k+x+br
+   $$
+
+   整理可得：
+
+   $$
+   k+x=(b-2a)r
+   $$
+
+   令 \(n=b-2a\)，则：
+
+   $$
+   k=nr-x
+   $$
+
+   进一步改写为：
+
+   $$
+   k=(n-1)r+(r-x)
+   $$
+
+因此，从相遇点 \(B\) 向前走 \(r-x\) 到达环入口 \(A\)，再绕环若干圈后，走过的总距离恰好为 \(k\)。所以，一个指针从 `head` 出发，另一个指针从相遇点 \(B\) 出发，两者以相同速度前进，最终会在环入口 \(A\) 相遇。
+
+证毕。
+
+
+
+### 框架三：归并排序
+
+题目：给定一个链表头节点head，将该链表排序
+
+通过快慢指针，将链表不断拆成两段，直到最后每段都只有一个节点为止；
+
+然后利用「合并两个有序链表」的解法，再将所有的短链合成一个完整长链，即可完成排序
+
+
+完整代码如下：
+```java
+
+    /**
+     * 合并两个升序链表
+     */
+    public ListNode mergeTwoLists(ListNode p, ListNode q) {
+        ListNode dummy = new ListNode(-1);
+        ListNode cur = dummy;
+        while (p != null && q != null) {
+            if (p.val <= q.val) {
+                cur.next = p;
+                p = p.next;
+            } else {
+                cur.next = q;
+                q = q.next;
+            }
+            cur = cur.next;
+        }
+        cur.next = p == null ? q : p;
+        return dummy.next;
+    }
+
+    /**
+     * 排序链表
+     */
+    public ListNode sortList(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        // 快慢指针走到中点
+        ListNode slow = new ListNode(-1, head);
+        ListNode fast = new ListNode(-1, head);
+        while (fast != null && fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+        // 从slow切断
+        ListNode rightSide = slow.next;
+        slow.next = null;
+        // 分治
+        ListNode a = sortList(head);
+        ListNode b = sortList(rightSide);
+        // 合并结果
+        ListNode res = mergeTwoLists(a, b);
+        return res;
+    }
+```
+
+**思路扩展**
+上面的解法是递归的思路,递归版是 O(n log n) 时间 + O(log n) 栈空间，不是 O(1)。为了达到O(1)空间的目标，可以使用迭代的思路。迭代与递归整体思路一致，不过一个是自顶向下（递归），一个是自底向上（迭代）。
+
+具体的方法（这个我没有做出来，参考了AI的解题思路）：
+
+```
+
+假设链表为`3->5->4->2->1`，迭代法自底向上逐步切割合并，类似‘小步快跑’。
+
+1. 创建dummy节点和tail节点，记录新链表的头和尾
+2. 第一轮：step默认1，切一个3，再切一个5，合并以后，连到新的tail指针，本轮以此类推
+3. 一轮结束后，排序好的链表置为待排列表，dummy和tail情况，下一轮继续使用
+4. 第二轮：step置为2，切一个`3->5`，再切一个`2->4`,继续如上操作
+5. 循环到切不出两个链表，即step>链表长度，此时链表已经完成了排序操作
+
+```
+
+按照迭代法需要几个辅助函数：「计算链表的长度」+「合并两个升序链表」+「切割n个节点」，其中切割n个节点非常关键，我自己实现时出现了多个纰漏，下面附一个最终版本作为记录。
+
+```java
+    /**
+     * 从head开始，切掉至多n个点，返回切断后剩余链的头结点
+     */
+    public ListNode cut(ListNode head, int n) {
+        if (head == null) {
+            return head;
+        }
+        int cnt = 1;
+        while (cnt < n && head.next != null) {
+            head = head.next;
+            cnt++;
+        }
+        ListNode result = head.next;
+        // Note 需要切断！
+        head.next = null;
+        return result;
+    }
+```
