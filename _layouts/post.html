@@ -291,6 +291,45 @@ layout: default
         background-color: #DCCCAC;
         border-radius: 4px;
     }
+    /* ===== Back to Top 浮动按钮 ===== */
+    .back-to-top {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #DCCCAC;
+        color: #546B41;
+        border: 2px solid #99AD7A;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 100;
+        box-shadow: 0 2px 8px rgba(84, 107, 65, 0.15);
+    }
+
+    .back-to-top.visible {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .back-to-top:hover {
+        background-color: #99AD7A;
+        color: #FFF8EC;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(84, 107, 65, 0.25);
+    }
+
+    .back-to-top svg {
+        width: 18px;
+        height: 18px;
+        fill: currentColor;
+    }
 </style>
 
 <article class="post-page h-entry" itemscope itemtype="http://schema.org/BlogPosting">
@@ -320,6 +359,11 @@ layout: default
 
     <a class="u-url" href="{{ page.url | relative_url }}" hidden></a>
 </article>
+
+<!-- Back to Top 浮动按钮 -->
+<button class="back-to-top" id="backToTop" title="回到顶部" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <svg viewBox="0 0 16 16"><path d="M8 2l6 6h-4v6H6V8H2z"/></svg>
+</button>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -417,5 +461,17 @@ document.addEventListener('DOMContentLoaded', function() {
     headings.forEach(function(heading) {
         observer.observe(heading);
     });
+});
+
+// Back to Top 按钮显示/隐藏
+window.addEventListener('scroll', function() {
+    var btn = document.getElementById('backToTop');
+    if (btn) {
+        if (window.scrollY > 400) {
+            btn.classList.add('visible');
+        } else {
+            btn.classList.remove('visible');
+        }
+    }
 });
 </script>

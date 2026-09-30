@@ -1,12 +1,6 @@
 // _sass/minima/custom-styles.scss
 
-// 这块东西一直没有生效，先不处理了
-/* DEBUG: custom-styles.scss IS LOADED! */
-html {
-    background-color: lime !important;
-    border: 10px solid red !important;
-  }
-// 强制覆盖 body 字体（使用 !important 确保生效）
+// 强制覆盖 body 字体
 html body {
     font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", Helvetica, Arial, sans-serif !important;
     font-size: 16px !important;
