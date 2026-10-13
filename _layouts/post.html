@@ -2,6 +2,11 @@
 layout: default
 ---
 <style>
+    /* 文章详情页 wrapper 加宽，覆盖 minima 主题默认 740px */
+    .page-content .wrapper {
+        max-width: min(1100px, 90vw);
+    }
+
     /* 页面整体背景 - 奶油白 */
     body {
         background-color: #FFF8EC !important;
@@ -273,8 +278,8 @@ layout: default
         font-weight: bold;
     }
 
-    /* 响应式：小屏隐藏TOC */
-    @media (max-width: 1024px) {
+    /* 响应式：wrapper 加宽后，1400px 以下屏幕右侧空间不足以放 TOC，隐藏 */
+    @media (max-width: 1400px) {
         .toc-sidebar {
             display: none;
         }

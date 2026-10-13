@@ -5,7 +5,127 @@ date:   2026-10-13 17:00:00 +0800
 tags: 学习笔记 AI辅助
 ---
 
+
 # 大模型评测入门：第1—5课讲义、原始作答与批改
+
+<a id="learning-roadmap"></a>
+<!-- 学习进度路线图：原生HTML内嵌，样式仅作用于eval-learning-roadmap容器。 -->
+<style>
+#eval-learning-roadmap {--bg:#f8fafc;--canvas:#fff;--border:#cbd5e1;--main:#0f172a;--sub:#64748b;--accent:#1d4ed8;--font:system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"SF Mono",Monaco,Consolas,monospace}
+#eval-learning-roadmap, #eval-learning-roadmap * {box-sizing:border-box}
+#eval-learning-roadmap .diagram-canvas {max-width:1420px;margin:auto;background:var(--canvas);border:2px solid var(--border);padding:30px}
+#eval-learning-roadmap .diagram-header {border-bottom:1px solid var(--border);padding-bottom:20px;display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+#eval-learning-roadmap h1 {font-size:27px;line-height:1.4;margin:0;font-weight:650}
+#eval-learning-roadmap .subtitle {font-size:12px;letter-spacing:1px;color:var(--sub);margin:7px 0 0;text-transform:uppercase;font-family:var(--mono)}
+#eval-learning-roadmap .snapshot {font-size:12px;white-space:nowrap;border:1px solid var(--border);padding:7px 10px;margin-top:5px}
+#eval-learning-roadmap .position {border-left:4px solid var(--accent);padding:14px 18px;margin:20px 0;background:#fff;outline:1px solid var(--border)}
+#eval-learning-roadmap .position strong {font-size:20px;color:var(--accent);font-weight:650}
+#eval-learning-roadmap .position p {margin:7px 0 0;font-size:14px;color:var(--sub);line-height:1.7}
+#eval-learning-roadmap .legend {display:flex;flex-wrap:wrap;gap:20px;margin:20px 0 24px;font-size:13px;align-items:center}
+#eval-learning-roadmap .key {display:flex;align-items:center;gap:7px}
+#eval-learning-roadmap .symbol {width:15px;height:15px;border:1px solid var(--main);display:inline-block;flex-shrink:0}
+#eval-learning-roadmap .covered {background:var(--main)}
+#eval-learning-roadmap .partial {background:none;position:relative}
+#eval-learning-roadmap .partial:before {content:"";position:absolute;top:0;left:0;width:50%;height:100%;background:var(--main)}
+#eval-learning-roadmap .future {border-color:var(--border);background:#fff}
+#eval-learning-roadmap .current-label {color:var(--accent);border:1px solid var(--accent);padding:3px 7px;font-size:11px}
+#eval-learning-roadmap .stages {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:26px;align-items:stretch}
+#eval-learning-roadmap .stage {position:relative;border:1px solid var(--border);padding:0 15px 16px;min-width:0}
+#eval-learning-roadmap .stage:not(:last-child):after {content:"→";position:absolute;right:-23px;top:27px;color:var(--sub);font-size:21px}
+#eval-learning-roadmap .stage.current {border:2px solid var(--accent);padding:0 14px 15px}
+#eval-learning-roadmap .stage-head {border-bottom:1px solid var(--border);padding:15px 0 13px;min-height:95px}
+#eval-learning-roadmap .stage.current .stage-head {border-color:var(--accent)}
+#eval-learning-roadmap .stage-number {font:11px var(--mono);letter-spacing:1px;color:var(--sub);margin-bottom:7px}
+#eval-learning-roadmap h2 {font-size:18px;line-height:1.45;font-weight:650;margin:0}
+#eval-learning-roadmap .phase {display:block;margin-top:8px;font-size:11px;color:var(--sub)}
+#eval-learning-roadmap .phase.here {color:var(--accent)}
+#eval-learning-roadmap .nodes {display:flex;flex-direction:column;gap:10px;margin-top:14px}
+#eval-learning-roadmap .node {border:1px solid var(--border);padding:12px;background:#fff;display:flex;gap:10px;align-items:flex-start}
+#eval-learning-roadmap .node .symbol {margin-top:4px;width:12px;height:12px}
+#eval-learning-roadmap .node h3 {font-size:14px;line-height:1.5;margin:0;font-weight:600}
+#eval-learning-roadmap .node p {font-size:12px;line-height:1.6;color:var(--sub);margin:5px 0 0}
+#eval-learning-roadmap .node.unseen {border-style:dashed}
+#eval-learning-roadmap .node.unseen h3 {font-weight:500}
+#eval-learning-roadmap .node.focus {border-color:var(--accent)}
+#eval-learning-roadmap .node.focus h3 {color:var(--accent)}
+#eval-learning-roadmap .node.focus small {display:block;font-size:10px;letter-spacing:1px;color:var(--accent);margin-top:7px}
+#eval-learning-roadmap .stage-output {margin-top:15px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;line-height:1.7;color:var(--sub)}
+#eval-learning-roadmap .stage-output b {font-weight:500;color:var(--main)}
+#eval-learning-roadmap .footer {margin-top:25px;padding-top:15px;border-top:1px solid var(--border);font-size:12px;line-height:1.8;color:var(--sub)}
+#eval-learning-roadmap .footer p {margin:0 0 5px}
+#eval-learning-roadmap .footer .next {color:var(--main);font-size:14px}
+#eval-learning-roadmap .footer .next span {border:1px solid var(--main);font:10px var(--mono);padding:2px 5px;margin-right:8px}
+#eval-learning-roadmap .footer code {font-family:var(--mono)}
+@media(max-width:1100px) {
+#eval-learning-roadmap .stages {grid-template-columns:repeat(2,minmax(0,1fr))}
+#eval-learning-roadmap .stage:nth-child(2):after {display:none}
+#eval-learning-roadmap .stage-head {min-height:85px}
+}
+@media(max-width:650px) {
+#eval-learning-roadmap .diagram-canvas {padding:18px}
+#eval-learning-roadmap .diagram-header {display:block}
+#eval-learning-roadmap h1 {font-size:23px}
+#eval-learning-roadmap .snapshot {display:inline-block;margin-top:14px}
+#eval-learning-roadmap .position strong {font-size:17px}
+#eval-learning-roadmap .stages {grid-template-columns:1fr;gap:22px}
+#eval-learning-roadmap .stage:after {display:none}
+#eval-learning-roadmap .stage-head {min-height:0}
+#eval-learning-roadmap .legend {gap:12px}
+#eval-learning-roadmap .position p {font-size:13px}
+}
+@media print {
+#eval-learning-roadmap .diagram-canvas {max-width:none;padding:18px;border:1px solid var(--border)}
+#eval-learning-roadmap .stages {grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+#eval-learning-roadmap .stage:not(:last-child):after {right:-17px;font-size:15px}
+#eval-learning-roadmap .node {break-inside:avoid;padding:8px}
+#eval-learning-roadmap .stage {break-inside:avoid;padding-left:10px;padding-right:10px}
+#eval-learning-roadmap .node h3 {font-size:12px}
+#eval-learning-roadmap .node p {font-size:10px}
+#eval-learning-roadmap .snapshot {font-size:10px}
+#eval-learning-roadmap .footer {font-size:10px}
+#eval-learning-roadmap h1 {font-size:23px}
+}
+#eval-learning-roadmap {font-family:var(--font);color:var(--main);background:var(--bg);padding:12px;margin:16px 0;line-height:1.5;}
+</style>
+
+<div id="eval-learning-roadmap">
+<main class="diagram-canvas" aria-label="大模型评测入门四阶段学习进度路线图">
+<header class="diagram-header"><div><h1>大模型评测入门 · 学习进度路线图</h1><p class="subtitle">DEFINE → DESIGN → EXECUTE → VALIDATE</p></div><div class="snapshot">进度快照：第1—5课之后</div></header>
+<section class="position"><strong>当前位置：阶段 03 起点 · 最小离线评测实践</strong><p>已经学习到运行脚本、自动格式校验和异常统计；目前使用教学模拟回答，还未开展完整的实际 P1/P2 对比实验。前两阶段仍有待补内容。</p></section>
+<div class="legend" aria-label="图例"><div class="key"><span class="symbol covered" aria-hidden="true"></span>已覆盖：讲解与对应练习</div><div class="key"><span class="symbol partial" aria-hidden="true"></span>部分覆盖：有基础，尚未完整实践</div><div class="key"><span class="symbol future" aria-hidden="true"></span>尚未覆盖：尚未系统讲解与练习</div><span class="current-label">蓝色边框：当前到达位置</span></div>
+<div class="stages">
+<section class="stage"><div class="stage-head"><div class="stage-number">STAGE 01</div><h2>定义评测与边界</h2><span class="phase">第1课为主 · 决策层待补</span></div><div class="nodes">
+<article class="node"><span class="symbol covered" aria-hidden="true"></span><div><h3>已覆盖 · 被测对象与范围</h3><p>生成组件 vs 完整应用；困难场景纳入；结论不越界。第1课。</p></div></article>
+<article class="node"><span class="symbol covered" aria-hidden="true"></span><div><h3>已覆盖 · 固定输入与历史</h3><p>同问题、材料、消息历史；只替换提示配置。第1课及追问。</p></div></article>
+<article class="node"><span class="symbol partial" aria-hidden="true"></span><div><h3>部分 · 决策与实验定义</h3><p>已讨论与作答；任务定义尚未完整复评，风险门槛及权衡待深化。</p></div></article>
+<article class="node unseen"><span class="symbol future" aria-hidden="true"></span><div><h3>未覆盖 · 能力基准与线上监控</h3><p>离线应用评测与线上反馈的系统比较，尚未展开。</p></div></article>
+</div><div class="stage-output"><b>阶段产物：</b>完整评测任务定义<br>目前：已练习对象与边界，决策规则未闭合。</div></section>
+<section class="stage"><div class="stage-head"><div class="stage-number">STAGE 02</div><h2>设计样本与标准</h2><span class="phase">第2—3课 · 基础已练习</span></div><div class="nodes">
+<article class="node"><span class="symbol covered" aria-hidden="true"></span><div><h3>已覆盖 · C / G / F 判分</h3><p>核心正确性、有据性、格式；遗漏、拒答与错误引用。第2课。</p></div></article>
+<article class="node"><span class="symbol covered" aria-hidden="true"></span><div><h3>已覆盖 · 三类诊断样本</h3><p>边界、材料不足、部分可答；发现题目与参考要点错位。第3课。</p></div></article>
+<article class="node"><span class="symbol partial" aria-hidden="true"></span><div><h3>部分 · 完整数据集与 Rubric</h3><p>已用教学标准判分、设计3题；真实分布覆盖与自主标准校准未完成。</p></div></article>
+<article class="node"><span class="symbol partial" aria-hidden="true"></span><div><h3>部分 · 开发 / 保留集管理</h3><p>已介绍近似题分组与泄漏；尚未独立切分、封存保留样本。</p></div></article>
+</div><div class="stage-output"><b>阶段产物：</b>可核验的评测集与标准<br>目前：小练习完成，尚非完整业务评测集。</div></section>
+<section class="stage current" aria-label="当前阶段：工程执行与公平比较"><div class="stage-head"><div class="stage-number">STAGE 03 · CURRENT</div><h2>工程执行与比较</h2><span class="phase here">第4—5课 · 最小离线实践</span></div><div class="nodes">
+<article class="node"><span class="symbol covered" aria-hidden="true"></span><div><h3>已覆盖 · 原始记录与复评</h3><p>样本、配置、原文、评分分离；编号；版本与人工修正。第4—5课。</p></div></article>
+<article class="node"><span class="symbol covered" aria-hidden="true"></span><div><h3>已覆盖 · 超时与统计分母</h3><p>timeout + N/A；返回率、格式率、全计划通过率分开。第4—5课。</p></div></article>
+<article class="node focus"><span class="symbol covered" aria-hidden="true"></span><div><h3>已覆盖 · 最小 Python 评测器</h3><p>运行自测；新增F失败计数与断言；规则评F，人工评C/G。</p><small>目前已到达的实操节点</small></div></article>
+<article class="node"><span class="symbol partial" aria-hidden="true"></span><div><h3>部分 · 实际 P1 / P2 比较</h3><p>已学配对与配置记录；尚未收集实际回答并比较，成本延迟口径待补。</p></div></article>
+</div><div class="stage-output"><b>阶段产物：</b>独立项目逐题与分组结果<br>目前：教学脚本练习，尚非真实模型实验。</div></section>
+<section class="stage"><div class="stage-head"><div class="stage-number">STAGE 04</div><h2>可信评测与改进</h2><span class="phase">后续课程 · 尚未系统开展</span></div><div class="nodes">
+<article class="node unseen"><span class="symbol future" aria-hidden="true"></span><div><h3>未覆盖 · 模型裁判校准</h3><p>位置、长度、同源偏差；人工基准、分歧与仲裁实验。</p></div></article>
+<article class="node"><span class="symbol partial" aria-hidden="true"></span><div><h3>部分 · 失败诊断与证据链</h3><p>已做错误归因练习；尚未基于项目结果诊断、修复和验证。</p></div></article>
+<article class="node unseen"><span class="symbol future" aria-hidden="true"></span><div><h3>未覆盖 · 改进后回归闭环</h3><p>修复失败题、检验原通过题、独立新样本验证与副作用检查。</p></div></article>
+<article class="node"><span class="symbol partial" aria-hidden="true"></span><div><h3>部分 · 报告与试运行判断</h3><p>已理解不凭单一总分上线；证据门槛、权衡及完整报告待完成。</p></div></article>
+</div><div class="stage-output"><b>阶段产物：</b>改进证据与决策报告<br>目前：风险概念已提及，闭环项目未做。</div></section>
+</div>
+<footer class="footer"><p class="next"><span>NEXT</span>下一课：评测结果如何支持决策 · 门槛、权衡与证据不足时的行动</p><p>“已覆盖”仅表示相关内容讲解并完成课堂练习，不等于生产级掌握、整周验收通过或整个阶段完成。当前定位是到达的实操节点，不是完成百分比。</p><p>依据：四阶段入门方案与第1—5课讲义、原答及批改记录。当前对象为固定材料下的生成组件；尚无完整真实模型对比或试运行证据。路线按知识依赖展开，不按课号直接对应周次。</p></footer>
+</main>
+</div>
+
+显示说明：本图为原生HTML内嵌版，无需另外保存HTML文件。需使用允许HTML与style的Markdown阅读器；过滤样式的阅读器可能显示无样式内容。
+
+---
 
 这是一份独立保存的复习文档，包含五课完整讲义、你在本次对话中提交的原始答案与代码、整理后的批改，以及因追问而补充的规则澄清。第五课原始配套脚本全文收在附录，不依赖其他文件链接。
 
@@ -14,6 +134,8 @@ tags: 学习笔记 AI辅助
 五课按实际教学顺序组织，并不等同于原四周计划的第一周：第一课主要对应第一周；第二、三课进入第二周；第四、五课涉及第三周基础。课内阶段性通过，不等于第一周综合验收已通过。
 
 ## 目录
+
+[学习进度路线图](#learning-roadmap)
 
 [复习时优先采用的规则](#review-rules)
 
@@ -1385,4 +1507,3 @@ if __name__ == "__main__":
 建议：下一课回到决策层，讨论P1/P2差异、风险门槛、成本延迟权衡和证据不足时怎样行动；现有脚本只提供分数，不替你决定系统可用性。
 
 脑暴：之后可把相同基础迁移到RAG完整链路与Agent评测，但需扩大对象和证据记录，不能直接把本课程固定材料实验的结论当端到端结论。
-
