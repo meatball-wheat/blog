@@ -349,7 +349,7 @@ layout: default
             {%- if page.tags.size > 0 -%}
             <span class="post-meta-separator">|</span>
             {%- for tag in page.tags -%}
-            <a href="{{ site.baseurl }}/tags/#{{ tag | slugify }}" class="post-tag">{{ tag }}</a>
+            <a href="{{ site.baseurl }}/?tag={{ tag | url_encode }}" class="post-tag">{{ tag }}</a>
             {%- endfor -%}
             {%- endif -%}
         </p>

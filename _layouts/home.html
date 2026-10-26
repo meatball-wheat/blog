@@ -739,6 +739,13 @@ layout: default
   document.addEventListener('DOMContentLoaded', function() {
     applyFilters();
     // scaleTags();  // 标签云字号差异化，文章足够多时取消注释
+
+    // URL 参数自动筛选：从详情页点击标签跳转回首页时，自动按标签筛选
+    var urlParams = new URLSearchParams(window.location.search);
+    var tagParam = urlParams.get('tag');
+    if (tagParam) {
+      filterByTag(tagParam);
+    }
   });
 
   /**
